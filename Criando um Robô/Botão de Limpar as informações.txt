@@ -1,0 +1,32 @@
+Sub Limpar()
+'
+' Limpar Macro
+'
+
+'
+Application.ScreenUpdating = False
+    Range("B8:H8").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.ClearContents
+    Range("B8").Select
+Application.ScreenUpdating = True
+End Sub
+Sub LimparDados()
+'
+' LimparDados Macro
+'
+
+'
+Application.ScreenUpdating = False
+    Range("N8:T8").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.End(xlUp).Select
+    Range("M8").Select
+    Selection.Copy
+    Range("N8:T8").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    Range("N8").Select
+Application.ScreenUpdating = True
+End Sub

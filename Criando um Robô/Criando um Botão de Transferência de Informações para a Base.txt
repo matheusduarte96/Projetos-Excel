@@ -1,0 +1,139 @@
+Private Sub btTransferir_Click()
+
+Dim w           As Worksheet
+Dim Ultcel      As Range
+Dim W2          As Worksheet
+Dim Ultlin      As Long
+Dim Ultcel2     As Range
+Dim Ultlin2     As Long
+Dim Ultlin3     As Long
+
+Application.ScreenUpdating = False
+
+Set w = Sheets("CONTROLE")
+w.Select
+w.Range("B8").Select
+
+Set W2 = Sheets("BASE")
+
+Set Ultcel = w.Cells(w.Rows.Count, 2).End(xlUp)
+Ultlin = w.Cells(w.Rows.Count, 2).End(xlUp).Row
+
+W2.Select
+Set Ultcel = W2.Cells(W2.Rows.Count, 1).End(xlUp)
+Ultcel.Select
+ActiveCell.Offset(1, 0).Select
+
+'Verificar se na base ja consta a informação e depois acrescenta.
+'--------------------------------------------------------
+
+If Ultcel.Value <> "" Then
+    w.Select
+    w.Range("B8:H" & Ultlin).Select
+    Selection.Copy
+    W2.Select
+    ActiveCell.PasteSpecial
+    Application.CutCopyMode = False
+End If
+
+'Verificar se na base ja consta a informação de data e depois acrescenta
+'-----------------------------------------------------------------------
+
+Set Ultcel = W2.Cells(W2.Rows.Count, 8).End(xlUp)
+Ultcel.Select
+ActiveCell.Offset(1, 0).Select
+
+
+If Ultcel.Value <> "" Then
+    
+    w.Select
+    w.Range("B3").Select
+    Selection.Copy
+    Set W2 = Sheets("BASE")
+    Ultlin2 = W2.Cells(W2.Rows.Count, 8).End(xlUp).Row + 1
+    Ultlin3 = W2.Cells(W2.Rows.Count, 1).End(xlUp).Row
+    W2.Select
+    
+    With W2.Range("H" & Ultlin2 & ":H" & Ultlin3)
+    .PasteSpecial xlPasteValues
+    .BorderAround LineStyle:=xlContinuous
+    .Borders(xlInsideHorizontal).LineStyle = xlContinuous
+    .Application.CutCopyMode = False
+    End With
+    
+    
+    W2.Range("I4").Select
+    Selection.Copy
+    Set W2 = Sheets("BASE")
+    Ultlin2 = W2.Cells(W2.Rows.Count, 9).End(xlUp).Row + 1
+    Ultlin3 = W2.Cells(W2.Rows.Count, 1).End(xlUp).Row
+    
+    With W2.Range("I" & Ultlin2 & ":I" & Ultlin3)
+    .PasteSpecial xlPasteFormulasAndNumberFormats
+    .Application.CutCopyMode = False
+    End With
+
+    
+    W2.Range("J4").Select
+    Selection.Copy
+    Set W2 = Sheets("BASE")
+    Ultlin2 = W2.Cells(W2.Rows.Count, 10).End(xlUp).Row + 1
+    Ultlin3 = W2.Cells(W2.Rows.Count, 1).End(xlUp).Row
+    
+    With W2.Range("J" & Ultlin2 & ":J" & Ultlin3)
+    .PasteSpecial xlPasteFormulas
+    .Application.CutCopyMode = False
+    End With
+    
+'Realiza a remoção de datas duplicadas para a validação de dados
+'---------------------------------------------------------------
+    Ultlin2 = W2.Cells(W2.Rows.Count, 11).End(xlUp).Row + 1
+    Ultlin3 = W2.Cells(W2.Rows.Count, 1).End(xlUp).Row
+    
+    W2.Range("H5:H" & Ultlin3).Select
+    Selection.Copy
+    
+    With W2.Range("K5")
+        .Select
+        .PasteSpecial xlPasteValues
+        .BorderAround LineStyle:=False
+        .Application.CutCopyMode = False
+    End With
+    
+    ActiveSheet.Range("K5:K" & Ultlin3).RemoveDuplicates Columns:=1, Header:=xlNo
+    W2.Range("K:K").Select
+    Selection.NumberFormat = "m/d/yyyy"
+    W2.Range("K4").Select
+    
+    W2.Range("K4").Select
+    W2.Range(Selection, Selection.End(xlDown)).Select
+    W2.Range(Selection, Selection.End(xlDown)).Select
+    Selection.AutoFilter
+    Selection.End(xlUp).Select
+    W2.Range("K5").Select
+    ActiveWorkbook.Worksheets("BASE").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("BASE").AutoFilter.Sort.SortFields.Add2 Key:=Range( _
+        "K4:K293"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("BASE").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    W2.Range("K4").Select
+    Selection.AutoFilter
+    
+    MsgBox "Transferência concluída", vbOKOnly, "Transferência"
+    
+    
+End If
+
+w.Select
+w.Range("B8").Select
+
+Application.ScreenUpdating = True
+
+End Sub
+

@@ -1,0 +1,98 @@
+Sub formula()
+'
+' formula Macro
+'
+
+Application.ScreenUpdating = False
+
+    ActiveWindow.SmallScroll Down:=-15
+    Range("B1:H1").Select
+    Selection.Copy
+    
+    Selection.End(xlToLeft).Select
+    Selection.End(xlDown).Select
+    Selection.End(xlDown).Select
+    Selection.End(xlToRight).Select
+    Range("E120").Select
+    Selection.End(xlToLeft).Select
+    Range("B120:H120").Select
+    Range(Selection, Selection.End(xlUp)).Select
+    Range(Selection, Selection.End(xlUp)).Select
+    Range("B8:H120").Select
+    Range("B120").Activate
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    ActiveWindow.SmallScroll Down:=-135
+    Range("B8").Select
+    Application.CutCopyMode = False
+    
+Application.ScreenUpdating = True
+
+End Sub
+Sub Classificar()
+'
+' Classificar Macro
+'
+Dim w           As Worksheet
+Dim Linha       As Integer
+Dim Ultlin      As Long
+
+Application.ScreenUpdating = False
+
+
+Set w = Sheets("CONTROLE")
+w.Select
+
+    Range("B8:H30").Select
+    Selection.End(xlUp).Select
+    Range("B8:H8").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Range("B8:H120").Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("N8").Select
+    ActiveSheet.Paste
+    Range("O14").Select
+    ActiveWindow.SmallScroll Down:=-9
+    Range("N7:T7").Select
+    Application.CutCopyMode = False
+    Selection.AutoFilter
+    Range("Q12").Select
+    ActiveWorkbook.Worksheets("CONTROLE").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("CONTROLE").AutoFilter.Sort.SortFields.Add Key:= _
+        Range("P7"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("CONTROLE").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Selection.AutoFilter
+    Range("B1:H1").Select
+    Selection.Copy
+    Range("B8:H8").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    Range("B8").Select
+    Application.CutCopyMode = False
+    Range("N8").Select
+    
+    Ultlin = w.Cells(w.Rows.Count, 14).End(xlUp).Row
+    
+    With w
+        Do While ActiveCell.Row <= Ultlin
+            If ActiveCell.Value = "" Then
+                w.Range("N" & ActiveCell.Row & ":T" & Ultlin).Select
+                Selection.ClearContents
+            End If
+            ActiveCell.Offset(1, 0).Select
+        Loop
+    End With
+Application.ScreenUpdating = True
+End Sub

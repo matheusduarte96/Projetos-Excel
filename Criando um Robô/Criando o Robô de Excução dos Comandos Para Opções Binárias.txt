@@ -1,0 +1,108 @@
+Private Sub btExcluir_Click()
+
+Dim w       As Worksheet
+Dim Ultlin  As Long
+
+Application.ScreenUpdating = False
+
+Set w = Sheets("ROBÔ")
+w.Select
+w.Range("A6").Select
+
+Ultlin = w.Cells(w.Rows.Count, 1).End(xlUp).Row
+
+w.Range("A" & ActiveCell.Row & ":H" & Ultlin).Select
+Selection.Delete
+
+w.Range("A6").Select
+
+Application.ScreenUpdating = True
+
+End Sub
+
+Private Sub btExportar_Click()
+
+Dim w          As Worksheet
+Dim Linha      As Integer
+
+Application.ScreenUpdating = False
+
+Set w = Sheets("ROBÔ")
+w.Select
+w.Range("H6").Select
+
+Linha = 6
+With w
+    Open "C:\Users\Mtduarte\Desktop\PROJETOS\Sinais para o dia .txt" For Output As 1
+    Do Until .Cells(Linha, 8) = ""
+    Print #1, .Cells(Linha, 8)
+    Linha = Linha + 1
+    Loop
+    MsgBox "Processo de exportação concluído", vbOKOnly, "Exportação"
+    Close 1
+End With
+
+Application.ScreenUpdating = True
+
+End Sub
+Private Sub btImportar_Click()
+
+Dim w          As Worksheet
+Dim Ultcel     As Range
+Dim Ultlin     As Long
+Dim W2         As Worksheet
+Dim Ultlin2    As Long
+Dim Ultlin3    As Long
+
+
+Application.ScreenUpdating = False
+
+Set w = Sheets("ROBÔ")
+
+Set W2 = Sheets("CONTROLE")
+W2.Select
+W2.Range("N8").Select
+Ultlin = W2.Cells(W2.Rows.Count, 1).End(xlUp).Row
+Ultlin2 = W2.Cells(W2.Rows.Count, 14).End(xlUp).Row
+
+
+
+W2.Range("N7:T" & Ultlin2).Select
+Selection.Copy
+
+w.Select
+w.Range("A5").PasteSpecial xlPasteFormulasAndNumberFormats
+Ultlin3 = w.Cells(w.Rows.Count, 1).End(xlUp).Row
+w.Range("F:F").Delete
+w.Range("E:E").Delete
+
+w.Range("E6:E" & Ultlin3).Select
+Selection.FormulaR1C1 = "2G"
+
+w.Range("F5").Select
+Selection.FormulaR1C1 = "VALOR"
+
+w.Range("F6:F" & Ultlin3).Select
+Selection.FormulaR1C1 = "'$2"
+
+w.Range("A6:A" & Ultlin3).Select
+Selection.FormulaR1C1 = "5M"
+
+w.Range("G5").Select
+Selection.FormulaR1C1 = "DATA"
+
+w.Range("G6:G" & Ultlin3).Select
+Selection.FormulaR1C1 = W2.Range("D6").Value
+w.Columns.AutoFit
+
+
+w.Range("H6").Select
+ActiveCell.Value = W2.Range("W1").formula
+Selection.Copy
+w.Range("H" & ActiveCell.Row & ":H" & Ultlin3).PasteSpecial xlPasteFormulasAndNumberFormats
+Application.CutCopyMode = xlNo
+w.Range("A6").Select
+
+    Application.ScreenUpdating = True
+
+End Sub
